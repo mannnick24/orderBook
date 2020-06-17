@@ -24,7 +24,8 @@ public class Order {
   private long quantity;
 
   /** Hide the default ctor */
-  private Order() {}
+  private Order() {
+  }
 
   /**
    * Copying ctor
@@ -38,11 +39,11 @@ public class Order {
   /**
    * All-values ctor
    *
-   * @param orderId unique identifier for the order
+   * @param orderId    unique identifier for the order
    * @param instrument identifier of an instrument
-   * @param side either buy or sell
-   * @param price limit price for the order, always positive
-   * @param quantity required quantity, always positive
+   * @param side       either buy or sell
+   * @param price      limit price for the order, always positive
+   * @param quantity   required quantity, always positive
    */
   private Order(String orderId, String instrument, Side side, long price, long quantity) {
     this.orderId = orderId;
@@ -72,21 +73,26 @@ public class Order {
   public long getQuantity() {
     return quantity;
   }
-  
+
   String getOrderBookKey() {
-    return sideInstrumentKey( this.instrument, this.side );
+    return sideInstrumentKey(this.instrument, this.side);
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
 
     Order order = (Order) o;
 
-    if (price != order.price) return false;
-    if (quantity != order.quantity) return false;
-    if (orderId != null ? !orderId.equals(order.orderId) : order.orderId != null) return false;
+    if (price != order.price)
+      return false;
+    if (quantity != order.quantity)
+      return false;
+    if (orderId != null ? !orderId.equals(order.orderId) : order.orderId != null)
+      return false;
     if (instrument != null ? !instrument.equals(order.instrument) : order.instrument != null)
       return false;
     return side == order.side;
@@ -104,48 +110,34 @@ public class Order {
 
   @Override
   public String toString() {
-    return "Order{"
-        + "orderId='"
-        + orderId
-        + '\''
-        + ", instrument='"
-        + instrument
-        + '\''
-        + ", side="
-        + side
-        + ", price="
-        + price
-        + ", quantity="
-        + quantity
-        + '}';
+    return "Order{" + "orderId='" + orderId + '\'' + ", instrument='" + instrument + '\'' + ", side=" + side
+        + ", price=" + price + ", quantity=" + quantity + '}';
   }
-  
-  private Order validate()
-  {
-    checkArgument( price > 0, "price must be positive");
-    checkArgument( quantity > 0, "quantity must be positive");
-    validateArg( instrument, "instrument cannot be null" );
-    validateArg( orderId, "orderId cannot be null" );
-    validateArg( side, "side cannot be null" );
+
+  private Order validate() {
+    checkArgument(price > 0, "price must be positive");
+    checkArgument(quantity > 0, "quantity must be positive");
+    validateArg(instrument, "instrument cannot be null");
+    validateArg(orderId, "orderId cannot be null");
+    validateArg(side, "side cannot be null");
     // check for special chars
-    checkArgument(instrument.indexOf( "::" ) == -1, "instrument name cannot contain '::'");
+    checkArgument(instrument.indexOf("::") == -1, "instrument name cannot contain '::'");
     return this;
   }
-  
-  static String sideInstrumentKey( String instrument, Side side ) {
+
+  static String sideInstrumentKey(String instrument, Side side) {
     return instrument + "::" + side.toString();
   }
-  
+
   static class Builder {
     private Order order = new Order();
-    
-    public Builder clone( Order order )
-    {
-      validateArg( order, "cannot clone null" );
-      this.order = new Order( order );
+
+    public Builder clone(Order order) {
+      validateArg(order, "cannot clone null");
+      this.order = new Order(order);
       return this;
     }
-    
+
     public Builder setOrderId(String orderId) {
       this.order.orderId = orderId;
       return this;
@@ -170,14 +162,14 @@ public class Order {
       this.order.quantity = quantity;
       return this;
     }
-    
+
     public Order build(String orderId, String instrument, Side side, long price, long quantity) {
-      return new Order( orderId, instrument, side, price, quantity);
+      return new Order(orderId, instrument, side, price, quantity);
     }
-    
+
     public Order get() {
       // clone to prevent the builder affecting the order
-      return new Order( order );
+      return new Order(order);
     }
   }
 }
